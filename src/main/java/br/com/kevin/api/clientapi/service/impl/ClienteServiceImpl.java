@@ -4,6 +4,8 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import br.com.kevin.api.clientapi.entity.Cliente;
+import br.com.kevin.api.clientapi.entity.Endereco;
+import br.com.kevin.api.clientapi.exceptions.ObjectNotFoundException;
 import br.com.kevin.api.clientapi.repository.ClienteRepository;
 import br.com.kevin.api.clientapi.service.ClienteService;
 
@@ -11,9 +13,11 @@ import br.com.kevin.api.clientapi.service.ClienteService;
 public class ClienteServiceImpl implements ClienteService {
 
     private ClienteRepository clienteRepository;
+    private EnderecoService enderecoService;
 
-    public ClienteServiceImpl(ClienteRepository clienteRepository) {
+    public ClienteServiceImpl(ClienteRepository clienteRepository, EnderecoService enderecoService) {
         this.clienteRepository = clienteRepository;
+        this.enderecoService = enderecoService;
     }
 
     @Override
@@ -24,20 +28,22 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public Cliente buscarPorId(Long id) {
-        return clienteRepository.findById(id).get();
+        return clienteRepository.findById(id).orElseThrow(
+                () -> new ObjectNotFoundException("Client Not Found: " + ClienteServiceImpl.class.getName()));
     }
 
     @Override
     public void inserir(Cliente cliente) {
+        Endereco endereco = enderecoService.buscarEndereco(cliente.getEndereco().getCep());
+        cliente.setEndereco(endereco);
         clienteRepository.save(cliente);
     }
 
     @Override
-    public void atualizar(Long id, Cliente cliente) {
-        Cliente found = clienteRepository.findById(id).get();
-        if (found != null) {
-            clienteRepository.save(cliente);
-        }
+    public void atualizar(Cliente cliente) {
+        clienteRepository.findById(cliente.getId())
+                .orElseThrow(() -> new ObjectNotFoundException("Client not found or does not exists!"));
+        this.inserir(cliente);
     }
 
     @Override
