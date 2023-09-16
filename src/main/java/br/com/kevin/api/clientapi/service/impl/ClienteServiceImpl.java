@@ -1,6 +1,8 @@
 package br.com.kevin.api.clientapi.service.impl;
 
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
 import br.com.kevin.api.clientapi.entity.Cliente;
@@ -22,9 +24,9 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public Iterable<Cliente> buscarTodos() {
-        Sort sort = Sort.by("nome").ascending();
-        return clienteRepository.findAll(sort);
+    public Page<Cliente> buscarTodos(Integer page, Integer linesPerPage, String orderBy, String direction) {
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
+        return clienteRepository.findAll(pageRequest);
     }
 
     @Override

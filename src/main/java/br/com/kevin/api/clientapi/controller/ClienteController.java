@@ -1,5 +1,6 @@
 package br.com.kevin.api.clientapi.controller;
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.kevin.api.clientapi.entity.Cliente;
@@ -24,9 +26,14 @@ public class ClienteController {
     }
 
     @GetMapping()
-    public ResponseEntity<Iterable<Cliente>> buscarTodos() {
-        System.out.println("Olá Mundo!");
-        return ResponseEntity.ok(clienteService.buscarTodos());
+    public ResponseEntity<Page<Cliente>> buscarTodos(
+            @RequestParam(value = "page", defaultValue = "0") Integer page,
+            @RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
+            @RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
+            @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
+
+        Page<Cliente> list = clienteService.buscarTodos(page, linesPerPage, orderBy, direction);
+        return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")

@@ -1,10 +1,12 @@
 package br.com.kevin.api.clientapi.service;
 
+import org.springframework.data.domain.Page;
+
 import br.com.kevin.api.clientapi.entity.Cliente;
 
 public interface ClienteService {
 
-    Iterable<Cliente> buscarTodos();
+    Page<Cliente> buscarTodos(Integer page, Integer linesPerPage, String orderBy, String direction);
 
     Cliente buscarPorId(Long id);
 
