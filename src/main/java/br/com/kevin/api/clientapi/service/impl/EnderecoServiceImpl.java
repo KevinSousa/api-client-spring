@@ -5,15 +5,16 @@ import org.springframework.stereotype.Service;
 import br.com.kevin.api.clientapi.entity.Endereco;
 import br.com.kevin.api.clientapi.exceptions.ObjectNotFoundException;
 import br.com.kevin.api.clientapi.repository.EnderecoRepository;
+import br.com.kevin.api.clientapi.service.EnderecoService;
 import br.com.kevin.api.clientapi.service.ViaCepService;
 
 @Service
-public class EnderecoService {
+public class EnderecoServiceImpl implements EnderecoService {
 
     private EnderecoRepository enderecoRepository;
     private ViaCepService viaCepService;
 
-    public EnderecoService(EnderecoRepository enderecoRepository, ViaCepService viaCepService) {
+    public EnderecoServiceImpl(EnderecoRepository enderecoRepository, ViaCepService viaCepService) {
         this.enderecoRepository = enderecoRepository;
         this.viaCepService = viaCepService;
     }

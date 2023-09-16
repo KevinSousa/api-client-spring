@@ -8,6 +8,7 @@ import br.com.kevin.api.clientapi.entity.Endereco;
 import br.com.kevin.api.clientapi.exceptions.ObjectNotFoundException;
 import br.com.kevin.api.clientapi.repository.ClienteRepository;
 import br.com.kevin.api.clientapi.service.ClienteService;
+import br.com.kevin.api.clientapi.service.EnderecoService;
 
 @Service
 public class ClienteServiceImpl implements ClienteService {
