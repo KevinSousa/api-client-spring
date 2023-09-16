@@ -10,7 +10,7 @@ public interface ClienteService {
 
     Cliente buscarPorId(Long id);
 
-    void inserir(Cliente cliente);
+    Cliente inserir(Cliente cliente);
 
     void atualizar(Cliente cliente);
 

@@ -1,5 +1,7 @@
 package br.com.kevin.api.clientapi.controller;
 
+import java.net.URI;
+
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.kevin.api.clientapi.entity.Cliente;
 import br.com.kevin.api.clientapi.service.ClienteService;
@@ -43,8 +46,12 @@ public class ClienteController {
 
     @PostMapping
     public ResponseEntity<Cliente> inserir(@RequestBody Cliente cliente) {
-        clienteService.inserir(cliente);
-        return ResponseEntity.ok(cliente);
+        var userCreated = clienteService.inserir(cliente);
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(userCreated.getId())
+                .toUri();
+        return ResponseEntity.created(location).body(userCreated);
     }
 
     @PutMapping()

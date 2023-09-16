@@ -1,5 +1,7 @@
 package br.com.kevin.api.clientapi.service.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort.Direction;
@@ -15,6 +17,7 @@ import br.com.kevin.api.clientapi.service.EnderecoService;
 @Service
 public class ClienteServiceImpl implements ClienteService {
 
+    private Logger logger = LoggerFactory.getLogger(ClienteServiceImpl.class);
     private ClienteRepository clienteRepository;
     private EnderecoService enderecoService;
 
@@ -25,6 +28,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public Page<Cliente> buscarTodos(Integer page, Integer linesPerPage, String orderBy, String direction) {
+        this.logger.info("Getting all Clients");
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
         return clienteRepository.findAll(pageRequest);
     }
@@ -36,14 +40,16 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public void inserir(Cliente cliente) {
+    public Cliente inserir(Cliente cliente) {
+        this.logger.info("Trying to insert Client");
         Endereco endereco = enderecoService.buscarEndereco(cliente.getEndereco().getCep());
         cliente.setEndereco(endereco);
-        clienteRepository.save(cliente);
+        return clienteRepository.save(cliente);
     }
 
     @Override
     public void atualizar(Cliente cliente) {
+        this.logger.info("Trying to update Client");
         clienteRepository.findById(cliente.getId())
                 .orElseThrow(() -> new ObjectNotFoundException("Client not found or does not exists!"));
         this.inserir(cliente);
@@ -51,6 +57,7 @@ public class ClienteServiceImpl implements ClienteService {
 
     @Override
     public void deletar(Long id) {
+        this.logger.info("Trying to delete Client");
         clienteRepository.deleteById(id);
     }
 }
