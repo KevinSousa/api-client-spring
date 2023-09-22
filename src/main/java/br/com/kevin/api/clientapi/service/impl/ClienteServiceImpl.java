@@ -1,5 +1,6 @@
 package br.com.kevin.api.clientapi.service.impl;
 
+import br.com.kevin.api.clientapi.dto.ClienteDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -14,6 +15,8 @@ import br.com.kevin.api.clientapi.repository.ClienteRepository;
 import br.com.kevin.api.clientapi.service.ClienteService;
 import br.com.kevin.api.clientapi.service.EnderecoService;
 
+import java.util.function.Function;
+
 @Service
 public class ClienteServiceImpl implements ClienteService {
 
@@ -27,24 +30,28 @@ public class ClienteServiceImpl implements ClienteService {
     }
 
     @Override
-    public Page<Cliente> buscarTodos(Integer page, Integer linesPerPage, String orderBy, String direction) {
+    public Page<ClienteDto> buscarTodos(Integer page, Integer linesPerPage, String orderBy, String direction) {
         this.logger.info("Getting all Clients");
         PageRequest pageRequest = PageRequest.of(page, linesPerPage, Direction.valueOf(direction), orderBy);
-        return clienteRepository.findAll(pageRequest);
+        var entities = clienteRepository.findAll(pageRequest);
+        Page<ClienteDto> dtos  = entities.map(this::toDto);
+        return dtos;
     }
 
     @Override
-    public Cliente buscarPorId(Long id) {
-        return clienteRepository.findById(id).orElseThrow(
+    public ClienteDto buscarPorId(Long id) {
+        var clientResult = clienteRepository.findById(id).orElseThrow(
                 () -> new ObjectNotFoundException("Client Not Found: " + ClienteServiceImpl.class.getName()));
+        return toDto(clientResult);
     }
 
     @Override
-    public Cliente inserir(Cliente cliente) {
+    public ClienteDto inserir(Cliente cliente) {
         this.logger.info("Trying to insert Client");
         Endereco endereco = enderecoService.buscarEndereco(cliente.getEndereco().getCep());
         cliente.setEndereco(endereco);
-        return clienteRepository.save(cliente);
+        var clientResult = clienteRepository.save(cliente);
+        return toDto(clientResult);
     }
 
     @Override
@@ -59,5 +66,9 @@ public class ClienteServiceImpl implements ClienteService {
     public void deletar(Long id) {
         this.logger.info("Trying to delete Client");
         clienteRepository.deleteById(id);
+    }
+
+    private ClienteDto toDto(Cliente cliente) {
+        return new ClienteDto(cliente.getNome(), cliente.getEndereco());
     }
 }

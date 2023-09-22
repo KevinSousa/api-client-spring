@@ -2,7 +2,9 @@ package br.com.kevin.api.clientapi.controller;
 
 import java.net.URI;
 
+import br.com.kevin.api.clientapi.dto.ClienteDto;
 import org.springframework.data.domain.Page;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,29 +31,25 @@ public class ClienteController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<Cliente>> buscarTodos(
+    public ResponseEntity<Page<ClienteDto>> buscarTodos(
             @RequestParam(value = "page", defaultValue = "0") Integer page,
             @RequestParam(value = "linesPerPage", defaultValue = "24") Integer linesPerPage,
             @RequestParam(value = "orderBy", defaultValue = "nome") String orderBy,
             @RequestParam(value = "direction", defaultValue = "ASC") String direction) {
 
-        Page<Cliente> list = clienteService.buscarTodos(page, linesPerPage, orderBy, direction);
+        Page<ClienteDto> list = clienteService.buscarTodos(page, linesPerPage, orderBy, direction);
         return ResponseEntity.ok(list);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Cliente> buscarPorId(@PathVariable Long id) {
+    public ResponseEntity<ClienteDto> buscarPorId(@PathVariable Long id) {
         return ResponseEntity.ok(clienteService.buscarPorId(id));
     }
 
     @PostMapping
-    public ResponseEntity<Cliente> inserir(@RequestBody Cliente cliente) {
+    public ResponseEntity<ClienteDto> inserir(@RequestBody Cliente cliente) {
         var userCreated = clienteService.inserir(cliente);
-        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(userCreated.getId())
-                .toUri();
-        return ResponseEntity.created(location).body(userCreated);
+        return new ResponseEntity<>(HttpStatus.CREATED);
     }
 
     @PutMapping()
